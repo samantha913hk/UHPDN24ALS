@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacology Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Start Page Styles */
+        .start-page {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .start-page h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        
+        .start-page p {
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .quiz-info-list {
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto 30px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .quiz-info-list h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .quiz-info-list ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .quiz-info-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            align-items: center;
+        }
+        
+        .quiz-info-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .quiz-info-list li::before {
+            content: "✓";
+            color: #2ecc71;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            background-color: #3498db;
+            color: white;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Quiz Styles */
+        .quiz-container {
+            display: none;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .progress {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+        
+        .question-container {
+            margin-bottom: 25px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .option {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+        }
+        
+        .option:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+        
+        .option.selected {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        #next-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        #next-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        #next-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        #restart-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        #restart-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .results {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #7f8c8d;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .quiz-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .start-page h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Page -->
+        <div class="start-page" id="start-page">
+            <h1>Pharmacology Quiz</h1>
+            <p>Test your knowledge with 40 randomized multiple-choice questions covering key pharmacology concepts.</p>
+            
+            <div class="quiz-info-list">
+                <h3>Quiz Features:</h3>
+                <ul>
+                    <li>40 carefully selected pharmacology questions</li>
+                    <li>Randomized question order each attempt</li>
+                    <li>Randomized answer options</li>
+                    <li>60 seconds per question</li>
+                    <li>Immediate feedback with explanations</li>
+                    <li>Track your progress and final score</li>
+                </ul>
+            </div>
+            
+            <button class="btn" id="start-btn">Start Quiz</button>
+        </div>
+        
+        <!-- Quiz Container -->
+        <div class="quiz-container" id="quiz-container">
+            <header>
+                <h1>Pharmacology Quiz</h1>
+                <p class="description">Test your knowledge with 40 randomized multiple-choice questions. You have 60 seconds per question.</p>
+            </header>
+            
+            <div class="quiz-info">
+                <div class="timer">Time: <span id="time">60</span>s</div>
+                <div class="progress">Question <span id="current">1</span> of 40</div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text" id="question-text"></div>
+                
+                <div class="options-container" id="options-container"></div>
+                
+                <div class="feedback" id="feedback"></div>
+            </div>
+            
+            <div class="controls">
+                <button id="restart-btn">Restart Quiz</button>
+                <button id="next-btn" disabled>Next Question</button>
+            </div>
+            
+            <div class="results" id="results">
+                <div class="score">Your Score: <span id="final-score">0</span>/40</div>
+                <div class="message" id="result-message"></div>
+                <button id="try-again-btn" class="btn">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questions data
+        const questions = [
+            {
+                question: "A clinician explains that a drug's therapeutic range is crucial for dosing. This range is best defined as the plasma concentration between the:",
+                options: [
+                    "time of onset and the time of peak effect.",
+                    "peak level achieved and the trough level before the next dose.",
+                    "minimum amount needed for efficacy and the level that causes toxicity.",
+                    "initial loading dose and the lower maintenance dose."
+                ],
+                answer: 2
+            },
+            {
+                question: "A patient stabilized on simvastatin is prescribed itraconazole. The pharmacist should be concerned because this combination is expected to:",
+                options: [
+                    "increase simvastatin levels, raising the risk of toxicity.",
+                    "decrease simvastatin levels, reducing its efficacy.",
+                    "increase itraconazole levels, raising the risk of toxicity.",
+                    "decrease itraconazole levels, reducing its efficacy."
+                ],
+                answer: 0
+            },
+            {
+                question: "Which route of administration, by definition, achieves 100% bioavailability by completely bypassing absorption barriers?",
+                options: [
+                    "Intramuscular",
+                    "Intravenous",
+                    "Sublingual",
+                    "Oral"
+                ],
+                answer: 1
+            },
+            {
+                question: "A patient on multiple medications is advised to avoid grapefruit juice. This is primarily because grapefruit juice acts as a:",
+                options: [
+                    "potent enzyme inducer, increasing drug metabolism.",
+                    "potent enzyme inhibitor, decreasing drug metabolism.",
+                    "chelating agent, binding to drugs in the gut.",
+                    "gastric acid neutralizer, altering drug dissolution."
+                ],
+                answer: 1
+            },
+            {
+                question: "St. John's Wort is known to reduce the plasma concentration of drugs like cyclosporin. This classifies St. John's Wort as a hepatic enzyme:",
+                options: [
+                    "Inducer.",
+                    "Inhibitor.",
+                    "Substrate.",
+                    "Cofactor."
+                ],
+                answer: 0
+            },
+            {
+                question: "The majority of drugs undergo biotransformation, or metabolism, with the primary organ responsible being the:",
+                options: [
+                    "Liver.",
+                    "Kidneys.",
+                    "Lungs.",
+                    "Spleen."
+                ],
+                answer: 0
+            },
+            {
+                question: "When counseling a patient on long-term systemic corticosteroid use, the nurse should include monitoring for all of the following adverse effects EXCEPT:",
+                options: [
+                    "Osteoporosis.",
+                    "Mood changes.",
+                    "Ocular hypertension (Glaucoma).",
+                    "Persistent hypotension."
+                ],
+                answer: 3
+            },
+            {
+                question: "A patient's antiplatelet therapy with clopidogrel may be compromised if which Proton Pump Inhibitor (PPI) is concurrently prescribed due to a significant drug interaction?",
+                options: [
+                    "Esomeprazole",
+                    "Pantoprazole",
+                    "Lansoprazole",
+                    "Rabeprazole"
+                ],
+                answer: 0
+            },
+            {
+                question: "For a patient with ulcerative colitis affecting the sigmoid colon, which rectal formulation of mesalazine is most appropriate due to its better retention in this area?",
+                options: [
+                    "Foam",
+                    "Cream",
+                    "Enema",
+                    "Suppository"
+                ],
+                answer: 0
+            },
+            {
+                question: "Proton Pump Inhibitors (PPIs) provide prolonged suppression of gastric acid secretion because they:",
+                options: [
+                    "are prodrugs activated permanently in the acidic canaliculi of parietal cells.",
+                    "irreversibly bind to and inhibit the H+/K+ ATPase pump.",
+                    "competitively block histamine at the H2 receptor.",
+                    "form a physical barrier that protects the stomach lining."
+                ],
+                answer: 1
+            },
+            {
+                question: "According to standard treatment guidelines, what is a common first-line antibiotic regimen used for Helicobacter pylori eradication?",
+                options: [
+                    "Amoxicillin + Metronidazole",
+                    "Amoxicillin + Clarithromycin",
+                    "Doxycycline + Metronidazole",
+                    "Ciprofloxacin + Amoxicillin"
+                ],
+                answer: 1
+            },
+            {
+                question: "A key patient counseling point for enteric-coated drug formulations, such as some PPIs, is to:",
+                options: [
+                    "always take them with food to enhance absorption.",
+                    "chew or crush them to ensure rapid onset of action.",
+                    "swallow them whole without crushing or chewing.",
+                    "dissolve them in water if swallowing is difficult."
+                ],
+                answer: 2
+            },
+            {
+                question: "A patient taking digoxin presents with nausea and bradycardia. Which electrolyte imbalance is most likely to have precipitated this digitalis toxicity?",
+                options: [
+                    "Hypokalemia",
+                    "Hyperkalemia",
+                    "Hypomagnesemia",
+                    "Hypernatremia"
+                ],
+                answer: 0
+            },
+            {
+                question: "Which type of insulin has a rapid onset of action and is typically administered 10-15 minutes before a meal to control postprandial glucose levels?",
+                options: [
+                    "Insulin Glargine",
+                    "Insulin Detemir",
+                    "Insulin Lispro",
+                    "NPH Insulin"
+                ],
+                answer: 2
+            },
+            {
+                question: "For stroke prevention in a patient with non-valvular atrial fibrillation, which anticoagulant works by antagonizing vitamin K and thereby inhibiting the synthesis of clotting factors II, VII, IX, and X?",
+                options: [
+                    "Apixaban",
+                    "Dabigatran",
+                    "Rivaroxaban",
+                    "Warfarin"
+                ],
+                answer: 3
+            },
+            {
+                question: "When treating hypertension in a patient with pre-existing atrioventricular (AV) block, which antihypertensive agent is considered the safest choice as it has minimal effects on cardiac conduction?",
+                options: [
+                    "Verapamil",
+                    "Diltiazem",
+                    "Metoprolol",
+                    "Amlodipine"
+                ],
+                answer: 3
+            },
+            {
+                question: "A key distinction in the pharmacological management of Asthma and COPD is that an Inhaled Corticosteroid (ICS):",
+                options: [
+                    "is a first-line controller therapy in asthma but is not used in COPD.",
+                    "is a first-line controller therapy in asthma but is not recommended as monotherapy in COPD.",
+                    "is used at much higher doses in COPD than in asthma.",
+                    "has more systemic side effects in asthma patients."
+                ],
+                answer: 1
+            },
+            {
+                question: "The inhalation route is preferred for managing asthma primarily because it:",
+                options: [
+                    "is the most cost-effective method available.",
+                    "provides a high local drug concentration to the lungs with minimal systemic exposure.",
+                    "guarantees 100% of the dose reaches the lower airways.",
+                    "completely eliminates the risk of all adverse effects."
+                ],
+                answer: 1
+            },
+            {
+                question: "The US FDA issued a black-box warning for montelukast due to reports of serious:",
+                options: [
+                    "hepatotoxicity.",
+                    "neuropsychiatric events.",
+                    "renal impairment.",
+                    "cardiovascular events."
+                ],
+                answer: 1
+            },
+            {
+                question: "Which of the following bronchodilators is classified as an 'Ultra' Long-Acting Beta Agonist (LABA) due to its once-daily dosing?",
+                options: [
+                    "Salmeterol",
+                    "Formoterol",
+                    "Olodaterol",
+                    "Salbutamol"
+                ],
+                answer: 2
+            },
+            {
+                question: "To minimize the local side effects of oropharyngeal candidiasis (thrush) and dysphonia (hoarseness) associated with Inhaled Corticosteroids (ICS), patients should be advised to:",
+                options: [
+                    "use their rescue inhaler 30 minutes after the ICS.",
+                    "rinse their mouth with water and spit after each inhalation.",
+                    "take an oral antifungal medication once a week.",
+                    "switch to a nebulized form of the medication."
+                ],
+                answer: 1
+            },
+            {
+                question: "Which of the following medications is specifically indicated to reduce the risk of exacerbations in patients with severe COPD associated with chronic bronchitis and a history of exacerbations?",
+                options: [
+                    "Prednisolone",
+                    "Roflumilast",
+                    "Montelukast",
+                    "Theophylline"
+                ],
+                answer: 1
+            },
+            {
+                question: "Prior to cataract surgery, it is critical for a patient to inform their surgeon if they are taking Tamsulosin due to the associated risk of:",
+                options: [
+                    "increased intraocular pressure.",
+                    "corneal dehydration.",
+                    "intraoperative floppy iris syndrome (IFIS).",
+                    "postoperative infection."
+                ],
+                answer: 2
+            },
+            {
+                question: "Mirabegron (Betmiga®) treats overactive bladder by which primary mechanism of action?",
+                options: [
+                    "Blocking muscarinic receptors on the detrusor muscle.",
+                    "Activating beta-3 adrenergic receptors, leading to detrusor relaxation.",
+                    "Inhibiting acetylcholinesterase, increasing acetylcholine levels.",
+                    "Blocking alpha-1 receptors in the prostate and bladder neck."
+                ],
+                answer: 1
+            },
+            {
+                question: "To mitigate the risk of first-dose orthostatic hypotension with an immediate-release alpha-1 blocker like doxazosin, the nurse should instruct the patient to:",
+                options: [
+                    "take the first dose with a high-fat meal.",
+                    "take the first dose at bedtime.",
+                    "double the first dose for a faster therapeutic effect.",
+                    "take the first dose first thing in the morning on an empty stomach."
+                ],
+                answer: 1
+            },
+            {
+                question: "Which of the following medications, due to its anticholinergic properties, should be used with caution in elderly males with Benign Prostatic Hyperplasia (BPH) as it can worsen urinary retention?",
+                options: [
+                    "Cetirizine",
+                    "Chlorpheniramine",
+                    "Paracetamol",
+                    "Atorvastatin"
+                ],
+                answer: 1
+            },
+            {
+                question: "When initiating finasteride for BPH, the patient should be counseled that its full therapeutic effect, such as reduced prostate size and improved urine flow:",
+                options: [
+                    "is rapid, occurring within 24-48 hours.",
+                    "may take 3 to 6 months to be fully realized.",
+                    "will be evident after the first week of treatment.",
+                    "is only achieved when combined with an alpha-blocker."
+                ],
+                answer: 1
+            },
+            {
+                question: "A common side effect profile for antimuscarinic drugs like tolterodine includes dry mouth, constipation, and blurred vision. Which of the following is typically NOT associated with this drug class?",
+                options: [
+                    "Tachycardia",
+                    "Orthostatic hypotension",
+                    "Diarrhea",
+                    "Dry eyes"
+                ],
+                answer: 2
+            },
+            {
+                question: "Febuxostat carries a black box warning from the FDA regarding an increased risk of:",
+                options: [
+                    "severe hepatic failure.",
+                    "cardiovascular death.",
+                    "acute renal failure.",
+                    "severe skin reactions like Stevens-Johnson syndrome."
+                ],
+                answer: 1
+            },
+            {
+                question: "A patient presents with an acute gout attack. Allopurinol therapy should not be initiated at this time because:",
+                options: [
+                    "it is completely ineffective during an acute attack.",
+                    "it can prolong and worsen the acute attack.",
+                    "it causes severe gastrointestinal upset.",
+                    "it must be taken with colchicine to be effective."
+                ],
+                answer: 1
+            },
+            {
+                question: "Targeted cancer therapies are distinguished from traditional chemotherapy by their ability to:",
+                options: [
+                    "cure a wider variety of cancers.",
+                    "cause less nausea and vomiting.",
+                    "act specifically on malignant cells only.",
+                    "interfere with specific molecules critical for cancer growth."
+                ],
+                answer: 3
+            },
+            {
+                question: "A patient receiving chemotherapy for high-grade lymphoma is at risk for Tumor Lysis Syndrome (TLS). Which set of laboratory findings is most characteristic of TLS?",
+                options: [
+                    "Hypouricemia, hypophosphatemia, hypercalcemia",
+                    "Hyperkalemia, hyperuricemia, hyperphosphatemia",
+                    "Hypokalemia, hypocalcemia, hyponatremia",
+                    "Hypernatremia, hypoglycemia, hypomagnesemia"
+                ],
+                answer: 1
+            },
+            {
+                question: "What is a serious, though rare, adverse effect of Biguanides (Metformin) in patients with renal failure?",
+                options: [
+                    "Hypoglycemia",
+                    "Lactic Acidosis",
+                    "Hyperkalemia",
+                    "Hepatitis"
+                ],
+                answer: 1
+            },
+            {
+                question: "Which class of antidiabetic drugs is associated with a low risk of hypoglycemia and does not cause weight gain?",
+                options: [
+                    "Sulfonylureas",
+                    "DPP-4 Inhibitors",
+                    "Meglitinides",
+                    "Insulin"
+                ],
+                answer: 1
+            },
+            {
+                question: "A key adverse effect of SGLT2 Inhibitors that patients should be advised to recognize is:",
+                options: [
+                    "Hypoglycemia",
+                    "Diabetic Ketoacidosis (DKA)",
+                    "Hypercalcemia",
+                    "Pancreatitis"
+                ],
+                answer: 1
+            },
+            {
+                question: "What is the primary mechanism of action of Bisphosphonates?",
+                options: [
+                    "Stimulate osteoblastic bone formation",
+                    "Inhibit osteoclastic bone resorption",
+                    "Increase calcium absorption from the gut",
+                    "Promote vitamin D synthesis"
+                ],
+                answer: 1
+            },
+            {
+                question: "What is the correct administration method for oral bisphosphonates?",
+                options: [
+                    "Take with orange juice while lying down",
+                    "Chew the tablet thoroughly before swallowing",
+                    "Swallow whole with plenty of water and remain upright for at least 1 hour",
+                    "Take with the largest meal of the day"
+                ],
+                answer: 2
+            },
+            {
+                question: "Statins (HMG CoA Reductase Inhibitors) primarily lower cholesterol by:",
+                options: [
+                    "Increasing cholesterol excretion in the bile",
+                    "Blocking dietary cholesterol absorption",
+                    "Inhibiting cholesterol synthesis in the liver",
+                    "Enhancing lipoprotein lipase activity"
+                ],
+                answer: 2
+            },
+            {
+                question: "Levodopa is particularly effective in treating which symptoms of Parkinson's disease?",
+                options: [
+                    "Dementia and psychosis",
+                    "Bradykinesia, rigidity, and tremor",
+                    "Orthostatic hypotension",
+                    "Sleep disturbances"
+                ],
+                answer: 1
+            },
+            {
+                question: "Why are Dopamine Agonists often preferred over Levodopa for initial monotherapy in younger Parkinson's patients?",
+                options: [
+                    "They are more effective at controlling tremor",
+                    "They cause fewer long-term motor complications",
+                    "They have no psychiatric side effects",
+                    "They do not cause orthostatic hypotension"
+                ],
+                answer: 1
+            }
+        ];
+
+        // Quiz state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer;
+        let timeLeft = 60;
+        let shuffledQuestions = [];
+        let userAnswers = Array(40).fill(null);
+        let currentCorrectIndex = -1;
+
+        // DOM elements
+        const startPage = document.getElementById('start-page');
+        const quizContainer = document.getElementById('quiz-container');
+        const startBtn = document.getElementById('start-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const tryAgainBtn = document.getElementById('try-again-btn');
+        const results = document.getElementById('results');
+        const finalScore = document.getElementById('final-score');
+        const resultMessage = document.getElementById('result-message');
+        const timeDisplay = document.getElementById('time');
+        const currentQuestionDisplay = document.getElementById('current');
+
+        // Start the quiz
+        function startQuiz() {
+            startPage.style.display = 'none';
+            quizContainer.style.display = 'block';
+            initQuiz();
+        }
+
+        // Initialize the quiz
+        function initQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = Array(40).fill(null);
+            
+            // Shuffle questions
+            shuffledQuestions = [...questions];
+            shuffleArray(shuffledQuestions);
+            
+            // Show first question
+            showQuestion();
+            
+            // Hide results, show quiz
+            results.style.display = 'none';
+            document.querySelector('.question-container').style.display = 'block';
+            document.querySelector('.quiz-info').style.display = 'flex';
+            document.querySelector('.controls').style.display = 'flex';
+        }
+
+        // Shuffle array using Fisher-Yates algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Display current question
+        function showQuestion() {
+            // Reset timer
+            clearInterval(timer);
+            timeLeft = 60;
+            timeDisplay.textContent = timeLeft;
+            
+            // Start timer
+            timer = setInterval(updateTimer, 1000);
+            
+            // Update progress
+            currentQuestionDisplay.textContent = currentQuestionIndex + 1;
+            
+            // Get current question
+            const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            
+            // Display question
+            questionText.textContent = currentQuestion.question;
+            
+            // Clear options container
+            optionsContainer.innerHTML = '';
+            
+            // Create shuffled options
+            const shuffledOptions = [...currentQuestion.options];
+            shuffleArray(shuffledOptions);
+            
+            // Find the index of the correct answer in the shuffled options
+            const correctAnswerText = currentQuestion.options[currentQuestion.answer];
+            currentCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
+            
+            // Create option elements
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.dataset.index = index;
+                
+                // Check if user has already answered this question
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    if (index === currentCorrectIndex) {
+                        optionElement.classList.add('correct');
+                    } else if (index === userAnswers[currentQuestionIndex]) {
+                        optionElement.classList.add('incorrect');
+                    }
+                }
+                
+                optionElement.addEventListener('click', () => selectOption(optionElement, index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Reset feedback and next button
+            feedback.style.display = 'none';
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null;
+            
+            // Show previous answer if exists
+            if (userAnswers[currentQuestionIndex] !== null) {
+                const options = document.querySelectorAll('.option');
+                options[userAnswers[currentQuestionIndex]].classList.add('selected');
+                
+                // Show feedback
+                showFeedback(userAnswers[currentQuestionIndex] === currentCorrectIndex);
+            }
+        }
+
+        // Update timer
+        function updateTimer() {
+            timeLeft--;
+            timeDisplay.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                if (userAnswers[currentQuestionIndex] === null) {
+                    // Auto-submit if time runs out
+                    showFeedback(false, true);
+                    nextBtn.disabled = false;
+                }
+            }
+        }
+
+        // Handle option selection
+        function selectOption(optionElement, selectedIndex) {
+            // Clear any previous selection
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Mark selected option
+            optionElement.classList.add('selected');
+            
+            // Store user's answer
+            userAnswers[currentQuestionIndex] = selectedIndex;
+            
+            // Stop timer
+            clearInterval(timer);
+            
+            // Show feedback
+            const isCorrect = selectedIndex === currentCorrectIndex;
+            showFeedback(isCorrect);
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+            }
+            
+            // Enable next button
+            nextBtn.disabled = false;
+        }
+
+        // Show feedback for selected answer
+        function showFeedback(isCorrect, isTimeout = false) {
+            feedback.textContent = isCorrect 
+                ? "Correct! Well done." 
+                : (isTimeout 
+                    ? "Time's up! The correct answer is highlighted." 
+                    : "Incorrect. The correct answer is highlighted.");
+            
+            feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.style.display = 'block';
+            
+            // Highlight correct answer
+            const options = document.querySelectorAll('.option');
+            options[currentCorrectIndex].classList.add('correct');
+            
+            if (!isCorrect && !isTimeout) {
+                // Also highlight incorrect selection
+                options[userAnswers[currentQuestionIndex]].classList.add('incorrect');
+            }
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Show final results
+        function showResults() {
+            // Hide quiz elements
+            document.querySelector('.question-container').style.display = 'none';
+            document.querySelector('.quiz-info').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            
+            // Show results
+            results.style.display = 'block';
+            finalScore.textContent = score;
+            
+            // Set result message based on score
+            if (score >= 35) {
+                resultMessage.textContent = "Excellent! You have a strong understanding of pharmacology.";
+            } else if (score >= 25) {
+                resultMessage.textContent = "Good job! You have a solid foundation in pharmacology.";
+            } else if (score >= 15) {
+                resultMessage.textContent = "Not bad! Keep studying to improve your knowledge.";
+            } else {
+                resultMessage.textContent = "Keep practicing! Review the material and try again.";
+            }
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', initQuiz);
+        tryAgainBtn.addEventListener('click', initQuiz);
+    </script>
+</body>
+</html>
